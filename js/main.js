@@ -16,13 +16,32 @@ function initNavbar() {
   const navbar = document.querySelector('.navbar');
   if (!navbar) return;
 
+  const logoImg = navbar.querySelector('.navbar__logo-img');
+  let defaultSrc = '';
+  let scrolledSrc = '';
+
+  if (logoImg) {
+    defaultSrc = logoImg.getAttribute('data-default-src') || logoImg.getAttribute('src');
+    scrolledSrc = logoImg.getAttribute('data-scrolled-src') || defaultSrc.replace(/Iskcon(%20|\s)Halifax(%20|\s)Logo\.png/i, 'Iskcon%20Halifax%20Logo%20-%20saffron.png');
+
+    // Preload scrolled image to prevent flicker on first scroll
+    const preloadImg = new Image();
+    preloadImg.src = scrolledSrc;
+  }
+
   const handleScroll = () => {
     if (window.scrollY > 80) {
       navbar.classList.add('navbar--solid');
       navbar.classList.remove('navbar--transparent');
+      if (logoImg && logoImg.getAttribute('src') !== scrolledSrc) {
+        logoImg.setAttribute('src', scrolledSrc);
+      }
     } else {
       navbar.classList.remove('navbar--solid');
       navbar.classList.add('navbar--transparent');
+      if (logoImg && logoImg.getAttribute('src') !== defaultSrc) {
+        logoImg.setAttribute('src', defaultSrc);
+      }
     }
   };
 
